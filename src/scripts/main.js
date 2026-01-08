@@ -2,24 +2,28 @@
 
 const body = document.querySelector('body');
 const logo = document.querySelector('.logo');
+let timer;
 
 function clickOnLogo() {
-  const promise = new Promise((resolve, reject) => {
+  const promise1 = new Promise((resolve) => {
     logo.addEventListener(
       'click',
       () => {
-        setTimeout(timer);
         resolve('Promise was resolved!');
       },
       { once: true },
     );
+  });
 
-    const timer = setTimeout(() => {
+  const promise2 = new Promise((resolve, reject) => {
+    timer = setTimeout(() => {
       reject(new Error('Promise was rejected!'));
     }, 3000);
   });
 
-  promise.then((message) => {
+  promise1.then((message) => {
+    clearTimeout(timer);
+
     const div = document.createElement('div');
 
     div.classList.add('message');
@@ -27,11 +31,13 @@ function clickOnLogo() {
     body.append(div);
   });
 
-  promise.catch((error) => {
+  promise2.catch((error) => {
+    clearTimeout(timer);
+
     const div = document.createElement('div');
 
     div.classList.add('message', 'error-message');
-    div.textContent = error;
+    div.textContent = error.message;
     body.append(div);
   });
 }
